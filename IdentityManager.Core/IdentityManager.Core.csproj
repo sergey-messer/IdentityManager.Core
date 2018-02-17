@@ -1,0 +1,94 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyName>TzIdentityManager</AssemblyName>
+    <RootNamespace>TzIdentityManager</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\Content\Bundle.min.css" />
+    <None Remove="Assets\Content\favicon.ico" />
+    <None Remove="Assets\Content\fonts\glyphicons-halflings-regular.eot" />
+    <None Remove="Assets\Content\fonts\glyphicons-halflings-regular.svg" />
+    <None Remove="Assets\Content\fonts\glyphicons-halflings-regular.ttf" />
+    <None Remove="Assets\Content\fonts\glyphicons-halflings-regular.woff" />
+    <None Remove="Assets\Content\logo.png" />
+    <None Remove="Assets\Scripts\Bundle.min.js" />
+    <None Remove="Assets\Templates\editor\property.html" />
+    <None Remove="Assets\Templates\home.html" />
+    <None Remove="Assets\Templates\index.html" />
+    <None Remove="Assets\Templates\message.html" />
+    <None Remove="Assets\Templates\modal.html" />
+    <None Remove="Assets\Templates\navbar.html" />
+    <None Remove="Assets\Templates\pager\buttons.html" />
+    <None Remove="Assets\Templates\pager\summary.html" />
+    <None Remove="Assets\Templates\roles\edit.html" />
+    <None Remove="Assets\Templates\roles\list.html" />
+    <None Remove="Assets\Templates\roles\new.html" />
+    <None Remove="Assets\Templates\users\accessdenied.html" />
+    <None Remove="Assets\Templates\users\edit.html" />
+    <None Remove="Assets\Templates\users\list.html" />
+    <None Remove="Assets\Templates\users\new.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\Content\Bundle.min.css" />
+    <EmbeddedResource Include="Assets\Content\favicon.ico" />
+    <EmbeddedResource Include="Assets\Content\fonts\glyphicons-halflings-regular.eot" />
+    <EmbeddedResource Include="Assets\Content\fonts\glyphicons-halflings-regular.svg" />
+    <EmbeddedResource Include="Assets\Content\fonts\glyphicons-halflings-regular.ttf" />
+    <EmbeddedResource Include="Assets\Content\fonts\glyphicons-halflings-regular.woff" />
+    <EmbeddedResource Include="Assets\Content\logo.png" />
+    <EmbeddedResource Include="Assets\Scripts\Bundle.min.js" />
+    <EmbeddedResource Include="Assets\Templates\editor\property.html" />
+    <EmbeddedResource Include="Assets\Templates\home.html" />
+    <EmbeddedResource Include="Assets\Templates\index.html" />
+    <EmbeddedResource Include="Assets\Templates\message.html" />
+    <EmbeddedResource Include="Assets\Templates\modal.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\Templates\navbar.html" />
+    <EmbeddedResource Include="Assets\Templates\pager\buttons.html" />
+    <EmbeddedResource Include="Assets\Templates\pager\summary.html" />
+    <EmbeddedResource Include="Assets\Templates\roles\edit.html" />
+    <EmbeddedResource Include="Assets\Templates\roles\list.html" />
+    <EmbeddedResource Include="Assets\Templates\roles\new.html" />
+    <EmbeddedResource Include="Assets\Templates\users\accessdenied.html" />
+    <EmbeddedResource Include="Assets\Templates\users\edit.html" />
+    <EmbeddedResource Include="Assets\Templates\users\list.html" />
+    <EmbeddedResource Include="Assets\Templates\users\new.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="6.2.2" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="3.2.0" />
+    <PackageReference Include="BuildBundlerMinifier" Version="2.6.362" />
+    <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="2.3.0" />
+    <PackageReference Include="IdentityServer4.AspNetIdentity" Version="2.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.0.1" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\Messages.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Messages.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\Messages.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Messages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

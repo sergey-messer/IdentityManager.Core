@@ -1,0 +1,29 @@
+[
+  
+  {
+    "outputFileName": "Assets/Scripts/Bundle.min.js",
+    "inputFiles": [
+      "Assets/Scripts/Libs/jquery-2.1.0.min.js",
+      "Assets/Scripts/Libs/bootstrap.min.js",
+      "Assets/Scripts/Libs/angular.min.js",
+      "Assets/Scripts/Libs/angular-route.min.js",
+      "Assets/Scripts/Libs/oidc-token-manager.min.js",
+      "Assets/Scripts/Libs/oidc-client.js",
+      "Assets/Scripts/App/ttIdm.js",
+      "Assets/Scripts/App/ttIdmUI.js",
+      "Assets/Scripts/App/ttIdmUsers.js",
+      "Assets/Scripts/App/ttIdmRoles.js",
+      "Assets/Scripts/App/ttIdmApp.js"
+    ],
+    "sourceMap": true,
+    "minify": {
+      "enabled": false
+    }
+  },
+  {
+    "outputFileName": "Assets/Content/Bundle.min.css",
+    "inputFiles": [
+      "Assets/Content/Bundle.css"
+    ]
+  }
+]
