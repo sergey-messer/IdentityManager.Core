@@ -16,7 +16,13 @@ namespace IdentityManager.Host.Configuration
                 new IdentityResources.Email(),
 
                 // custom identity resource with some consolidated claims
-                new IdentityResource("custom.profile", new[] { JwtClaimTypes.Name, JwtClaimTypes.Email, "location" })
+                new IdentityResource("custom.profile", new[]
+                {
+                    JwtClaimTypes.Name,
+                    JwtClaimTypes.Email,
+                    "location",
+                    "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+                })
             };
         }
 
@@ -28,7 +34,12 @@ namespace IdentityManager.Host.Configuration
                 new ApiResource("api1", "Some API 1")
                 {
                     // this is needed for introspection when using reference tokens
-                    ApiSecrets = { new Secret("secret".Sha256()) }
+                    ApiSecrets = { new Secret("secret".Sha256()) },
+                    UserClaims =
+                    {
+                        "name",
+                        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+                    }
                 },
                 
                 // expanded version if more control is needed

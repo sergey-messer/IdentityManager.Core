@@ -110,7 +110,8 @@ namespace TzIdentityManager.Configuration
 
                         option.RequireHttpsMetadata = false;
                         option.ApiName = "api1";
-                    });
+                    })
+                    .AddOpenIdConnect();
 
             };
 

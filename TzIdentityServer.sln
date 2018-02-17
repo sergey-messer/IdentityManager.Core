@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TzIdentityServer", "TzIdent
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityManager.Core", "IdentityManager.Core\IdentityManager.Core.csproj", "{DA6928A2-0636-49EB-8F9B-5CF446C7F121}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityManager.Host", "IdentityManager.Host\IdentityManager.Host.csproj", "{91C06D2F-B5AF-4402-8DC0-6FA462F4C816}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityManager.Host", "IdentityManager.Host\IdentityManager.Host.csproj", "{91C06D2F-B5AF-4402-8DC0-6FA462F4C816}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,7 +16,6 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{FF74C9AA-C790-4EEB-9765-203DA4F29384}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FF74C9AA-C790-4EEB-9765-203DA4F29384}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF74C9AA-C790-4EEB-9765-203DA4F29384}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF74C9AA-C790-4EEB-9765-203DA4F29384}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DA6928A2-0636-49EB-8F9B-5CF446C7F121}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

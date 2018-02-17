@@ -116,8 +116,12 @@ debugger
 
         
 
-        idmTokenManager.signinRedirectCallback(hash).then(function (user) {
+        idmTokenManager.mgr.signinRedirectCallback(hash).then(function (user) {
             debugger
+
+            idmTokenManager.loggedIn = true;
+            idmTokenManager.currentUser = user;
+
             //idmTokenManager.getUser().then(function (user) { debugger });
             $location.url("/");
             $scope.$apply();

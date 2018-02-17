@@ -8,16 +8,23 @@
         function intercept($q, idmTokenManager, idmErrorService) {
             return {
                 'request': function (config) {
-                    debugger 
+                    debugger
+                    var deferred = $q.defer();
                     idmErrorService.clear();
-                    if (idmTokenManager.currentUser != null) {
-                        var token = idmTokenManager.currentUser.access_token;
-                        if (token) {
-                            config.headers['Authorization'] = 'Bearer ' + token;
+                    idmTokenManager.mgr.getUser().then(function(user) {
+                        if (user != null) {
+                            config.headers['Authorization'] = 'Bearer ' + user.access_token;
                         }
-                    }
-                    
-                    return config;
+                        deferred.resolve(config);
+                    });
+                    //if (idmTokenManager.currentUser != null) {
+                    //    var token = idmTokenManager.currentUser.access_token;
+                    //    if (token) {
+                    //        config.headers['Authorization'] = 'Bearer ' + token;
+                    //    }
+                    //}
+                    return deferred.promise;
+                    //return config;
                 },
                 'responseError': function (response) {
                     if (response.status === 401) {
@@ -157,7 +164,7 @@
 
         this.mgr.events.addUserLoaded(function (user) {
             log("User loaded");
-            s//howTokens();
+            //showTokens();
         });
         this.mgr.events.addUserUnloaded(function () {
             log("User logged out locally");
@@ -352,3 +359,18 @@
     }
     angular.module("ttIdm").constant("OidcTokenManager", OidcTokenManager);
 })(angular);
+
+
+function log(data) {
+    document.getElementById('response').innerText = '';
+
+    Array.prototype.forEach.call(arguments, function (msg) {
+        if (msg instanceof Error) {
+            msg = "Error: " + msg.message;
+        }
+        else if (typeof msg !== 'string') {
+            msg = JSON.stringify(msg, null, 2);
+        }
+        document.getElementById('response').innerHTML += msg + '\r\n';
+    });
+}
