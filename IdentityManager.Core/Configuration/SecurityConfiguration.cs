@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 
@@ -16,6 +17,8 @@ namespace TzIdentityManager.Configuration
 
         public virtual bool? ShowLoginButton { get; set; }
 
+        public AuthorizationPolicy AuthorizationPolicy { get; set; }
+
         internal SecurityConfiguration()
         {
             RequireSsl = true;
@@ -24,6 +27,11 @@ namespace TzIdentityManager.Configuration
             NameClaimType = Constants.ClaimTypes.Name;
             RoleClaimType = Constants.ClaimTypes.Role;
             AdminRoleName = Constants.AdminRoleName;
+            AuthorizationPolicy= new AuthorizationPolicyBuilder()
+                .AddAuthenticationSchemes(Constants.BearerAuthenticationType)
+                .RequireRole(Constants.AdminRoleName)
+                .RequireAuthenticatedUser()
+                .Build();
         }
 
         internal virtual void Validate()

@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
+using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using TzIdentityManager.Api.Filters;
 using TzIdentityManager.Assets;
+using TzIdentityManager.Configuration;
 
 namespace TzIdentityManager.Api.Controllers
 {
@@ -25,13 +28,13 @@ namespace TzIdentityManager.Api.Controllers
     [SecurityHeaders]
     public class PageController : Controller
     {
-        //IdentityManagerOptions idmConfig;
-        //public PageController(IdentityManagerOptions idmConfig)
-        //{
-        //    if (idmConfig == null) throw new ArgumentNullException("idmConfig");
+        IdentityManagerOptions _idmConfig;
+        public PageController(IOptions<IdentityManagerOptions> idmConfig)
+        {
+            if (idmConfig == null) throw new ArgumentNullException("idmConfig");
 
-        //    this.idmConfig = idmConfig;
-        //}
+            this._idmConfig = idmConfig.Value;
+        }
 
         [HttpGet]
         [AllowAnonymous]

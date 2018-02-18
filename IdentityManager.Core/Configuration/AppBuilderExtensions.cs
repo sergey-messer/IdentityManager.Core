@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Security.Claims;
 using AutoMapper;
+using IdentityServer4.AccessTokenValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,99 +21,112 @@ namespace TzIdentityManager.Configuration
     {
 
 
-        public static IServiceCollection AddIdentityManager(this IServiceCollection services, Action<IdentityManagerOptions> configureOptions)
-        {
-            if (services == null)
-                throw new ArgumentNullException(nameof(services));
-            if (configureOptions == null)
-                throw new ArgumentNullException(nameof(configureOptions));
+        //public static IServiceCollection AddIdentityManager(this IServiceCollection services, Action<IdentityManagerOptions> configureOptions)
+        //{
+        //    if (services == null)
+        //        throw new ArgumentNullException(nameof(services));
+        //    if (configureOptions == null)
+        //        throw new ArgumentNullException(nameof(configureOptions));
 
-            services.Configure<IdentityManagerOptions>(configureOptions);
-            var identityManagerOptions = new IdentityManagerOptions();
-            configureOptions.Invoke(identityManagerOptions);
+        //    services.Configure<IdentityManagerOptions>(configureOptions);
+        //    //var identityManagerOptions = new IdentityManagerOptions();
+        //    //configureOptions.Invoke(identityManagerOptions);
 
-            //services.TryAdd(identityManagerOptions.Factory.IdentityManagerServiceDescriptor);
-            foreach (var registration in identityManagerOptions.Factory.Registrations)
-            {
-                services.TryAdd(registration);
-            }
+        //    ////services.TryAdd(identityManagerOptions.Factory.IdentityManagerServiceDescriptor);
+        //    //foreach (var registration in identityManagerOptions.Factory.Registrations)
+        //    //{
+        //    //    services.TryAdd(registration);
+        //    //}
 
-            services.AddAutoMapper(typeof(IdentityModelProfile));
+        //    services.AddAutoMapper(typeof(IdentityModelProfile));
 
-            return services;
-        }
+        //    return services;
+        //}
 
-        public static void UseIdentityManager(this IApplicationBuilder appBuilder, Action<IServiceCollection> servicesConfiguration/*, Action<IdentityManagerOptions> configureOptions*/)
+        public static void UseIdentityManager(this IApplicationBuilder appBuilder, Action<IServiceCollection> registerServices, IdentityManagerOptions identityManagerOptions)
         {
             if (appBuilder == null) throw new ArgumentNullException(nameof(appBuilder));
-            //if (options == null) throw new ArgumentNullException(nameof(options));
+            if (identityManagerOptions == null) throw new ArgumentNullException(nameof(identityManagerOptions));
 
-            //services.Configure<IdentityManagerOptions>(configureOptions);
+           
             //var identityManagerOptions = new IdentityManagerOptions();
             //configureOptions.Invoke(identityManagerOptions);
-            var options = appBuilder.ApplicationServices.GetService<IOptions<IdentityManagerOptions>>();
+            //var options = appBuilder.ApplicationServices.GetService<IOptions<IdentityManagerOptions>>();
 
-            if (!string.IsNullOrEmpty(options.Value.Authority))
-            {
-                appBuilder.UseBranchWithServices("/ids", null, null);
-            }
+            //if (!string.IsNullOrEmpty(options.Value.Authority))
+            //{
+            //    appBuilder.UseBranchWithServices("/ids", null, null);
+            //}
 
             Action<IServiceCollection> branchServices = idmServices =>
             {
-
+                
                 //Action<IServiceCollection> t = x =>
                 //{
-                servicesConfiguration(idmServices);
+                registerServices(idmServices);
                 //};
 
 
-                idmServices.AddIdentityManager(o =>
-                {
-                    var factory = new IdentityManagerServiceFactory();
+                //idmServices.AddIdentityManager(o =>
+                //{
+                //    var factory = new IdentityManagerServiceFactory();
 
-                    //var rand = new System.Random();
-                    //var users = Users.Get(rand.Next(5000, 20000));
-                    //var roles = Roles.Get(rand.Next(15));
+                //    //var rand = new System.Random();
+                //    //var users = Users.Get(rand.Next(5000, 20000));
+                //    //var roles = Roles.Get(rand.Next(15));
 
-                    //factory.Register(new Registration<ICollection<InMemoryUser>>(users));
-                    //factory.Register(new Registration<ICollection<InMemoryRole>>(roles));
-                    //factory.IdentityManagerService = new Registration<IIdentityManagerService, AspNetCoreIdentityManagerService>();
-                    //factory.IdentityManagerServiceDescriptor = ServiceDescriptor.Transient<IIdentityManagerService, AspNetCoreIdentityManagerService<ApplicationUser, IdentityRole>>();
+                //    //factory.Register(new Registration<ICollection<InMemoryUser>>(users));
+                //    //factory.Register(new Registration<ICollection<InMemoryRole>>(roles));
+                //    //factory.IdentityManagerService = new Registration<IIdentityManagerService, AspNetCoreIdentityManagerService>();
+                //    //factory.IdentityManagerServiceDescriptor = ServiceDescriptor.Transient<IIdentityManagerService, AspNetCoreIdentityManagerService<ApplicationUser, IdentityRole>>();
 
-                    o.Factory = factory;
-                    o.SecurityConfiguration = new HostSecurityConfiguration
-                    {
-                        HostAuthenticationType = "Cookies",
-                        AdditionalSignOutType = "oidc"
-                    };
-                });
+                //    o.Factory = factory;
+                //    o.SecurityConfiguration = new HostSecurityConfiguration
+                //    {
+                //        HostAuthenticationType = "Cookies",
+                //        AdditionalSignOutType = "oidc",
+                //        AdminRoleName = "admin",
+                //        RoleClaimType = "role"
+                //    };
+                //});
+
+                idmServices.AddAutoMapper(typeof(IdentityModelProfile));
 
                 idmServices.AddMvc(opt =>
                 {
-                    var policy = new AuthorizationPolicyBuilder()
-                        .AddAuthenticationSchemes(options.Value.SecurityConfiguration.BearerAuthenticationType)
-                        //.RequireRole(options.Value.SecurityConfiguration.AdminRoleName)
-                        .RequireAuthenticatedUser()
-                        .Build();
+                    //var policy = new AuthorizationPolicyBuilder()
+                    //    .AddAuthenticationSchemes(identityManagerOptions.SecurityConfiguration.BearerAuthenticationType)
+                    //    .RequireRole(identityManagerOptions.SecurityConfiguration.AdminRoleName)
+                    //    .RequireAuthenticatedUser()
+                    //    .Build();
 
-                    opt.Filters.Add(new AuthorizeFilter(policy));
+                    //opt.Filters.Add(new AuthorizeFilter(policy));
 
+                    opt.Filters.Add(new AuthorizeFilter(identityManagerOptions.SecurityConfiguration.AuthorizationPolicy));
                 });
 
 
 
-
-
-                idmServices.AddAuthentication("Bearer")
+                idmServices.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                     .AddIdentityServerAuthentication(option =>
                     {
                         //option.Authority = "http://localhost/tzidentityserver";
-                        option.Authority = "http://localhost:5001";
-
+                        option.Authority = identityManagerOptions.Authority;// "http://localhost:5001";
+                        option.RoleClaimType = "role";
                         option.RequireHttpsMetadata = false;
                         option.ApiName = "api1";
+                        
+                        //option.InboundJwtClaimTypeMap.
                     })
-                    .AddOpenIdConnect();
+                    //.AddOpenIdConnect(opt => {
+                    //    // Set all your OIDC options...
+                    //    opt.Authority="http://localhost:5001";
+                    //    opt.RequireHttpsMetadata = false;
+                    //    opt.ApiName = "api1";
+                    //    // and then set SaveTokens to save tokens to the AuthenticationProperties
+                    //    opt.SaveTokens = true;
+                    //})
+                    ;
 
             };
 
@@ -121,10 +136,10 @@ namespace TzIdentityManager.Configuration
                     app.Use(async (ctx, next) =>
                     {
                         if (!ctx.Request.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase) &&
-                            options.Value.SecurityConfiguration.RequireSsl)
+                            identityManagerOptions.SecurityConfiguration.RequireSsl)
                         {
                             //ctx.Response.Body.Write("HTTPS required");
-                            await next();
+                           await next();
                         }
                         else
                         {
@@ -133,7 +148,7 @@ namespace TzIdentityManager.Configuration
                     });
 
 
-                    options.Value.SecurityConfiguration.Configure(app);
+                    //options.Value.SecurityConfiguration.Configure(app);
 
                     //app.MapHttpAttributeRoutes();
                     app.UseFileServer(new FileServerOptions
@@ -166,7 +181,7 @@ namespace TzIdentityManager.Configuration
                     });
 
                     //app.UseIdentityServer();
-                    //app.UseAuthentication(); // not needed, since UseIdentityServer adds the authentication middleware
+                    app.UseAuthentication(); // not needed, since UseIdentityServer adds the authentication middleware
 
                     app.UseMvc(routes =>
                     {

@@ -54,6 +54,8 @@ namespace TzIdentityManager.Api.Controllers
         [HttpGet, Route("", Name = Constants.RouteNames.GetUsers)]
         public async Task<IActionResult> GetUsersAsync(string filter = null, int start = 0, int count = 100)
         {
+            var user = User.IsInRole("admin");
+
             var result = await idmService.QueryUsersAsync(filter, start, count);
             if (result.IsSuccess)
             {

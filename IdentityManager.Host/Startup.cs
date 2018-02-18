@@ -14,8 +14,10 @@ using IdentityManager.Host.Data;
 using IdentityManager.Host.Models;
 using IdentityManager.Host.Services;
 using Messer.TaxiBooker.Api.Domain.IdentityManager;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
+using TzIdentityManager;
 using TzIdentityManager.Api.Models.AutoMapper;
 using TzIdentityManager.Configuration;
 using TzIdentityManager.Core;
@@ -96,11 +98,24 @@ namespace IdentityManager.Host
 
                 idmServices.AddIdentity<ApplicationUser, IdentityRole>()
                     .AddEntityFrameworkStores<ApplicationDbContext>()
-                    .AddDefaultTokenProviders();
+                    //.AddDefaultTokenProviders()
+                    ;
 
                 idmServices.AddTransient
                     <IIdentityManagerService,
                         AspNetCoreIdentityManagerService<ApplicationUser, IdentityRole>>();
+
+                idmServices.Configure<IdentityManagerOptions>(o =>
+                {
+                    o.Authority = "http://localhost:5001";
+                    o.SecurityConfiguration = new HostSecurityConfiguration
+                    {
+                        HostAuthenticationType = "Cookies",
+                        AdditionalSignOutType = "oidc",
+                        AdminRoleName = "admin",
+                        RoleClaimType = "role"
+                    };
+                });
 
                 //idmServices.AddIdentityServer()
                 //    .AddDeveloperSigningCredential()
@@ -109,7 +124,24 @@ namespace IdentityManager.Host
                 //    .AddInMemoryApiResources(Resources.GetApiResources())
                 //    .AddInMemoryClients(Clients.Get())
                 //    .AddAspNetIdentity<ApplicationUser>();
-            });
+            },new IdentityManagerOptions()
+            {
+                Authority ="http://localhost:5001",
+                SecurityConfiguration = new HostSecurityConfiguration
+                {
+                    HostAuthenticationType = "Cookies",
+                    AdditionalSignOutType = "oidc",
+
+                    BearerAuthenticationType="Bearer",
+                    AdminRoleName = "admin",
+                    RoleClaimType = "role",
+                    AuthorizationPolicy = new AuthorizationPolicyBuilder()
+                        .AddAuthenticationSchemes(Constants.BearerAuthenticationType)
+                        .RequireRole("admin")
+                        .RequireAuthenticatedUser()
+                        .Build()
+                },
+        });
 
 
 

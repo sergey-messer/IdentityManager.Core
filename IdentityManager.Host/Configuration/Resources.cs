@@ -20,9 +20,9 @@ namespace IdentityManager.Host.Configuration
                 {
                     JwtClaimTypes.Name,
                     JwtClaimTypes.Email,
-                    "location",
-                    "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-                })
+                    "location"
+                }),
+                new IdentityResource("roles", new List<string> { "role" })
             };
         }
 
@@ -38,7 +38,7 @@ namespace IdentityManager.Host.Configuration
                     UserClaims =
                     {
                         "name",
-                        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+                        "role"
                     }
                 },
                 
