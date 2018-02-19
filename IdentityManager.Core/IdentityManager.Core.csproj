@@ -4,6 +4,9 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <AssemblyName>TzIdentityManager</AssemblyName>
     <RootNamespace>TzIdentityManager</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Sergey Messer</Authors>
+    <Company>Tz</Company>
   </PropertyGroup>
 
   <ItemGroup>

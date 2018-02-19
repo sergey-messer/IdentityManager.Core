@@ -98,7 +98,7 @@ namespace IdentityManager.Host
 
                 idmServices.AddIdentity<ApplicationUser, IdentityRole>()
                     .AddEntityFrameworkStores<ApplicationDbContext>()
-                    //.AddDefaultTokenProviders()
+                    .AddDefaultTokenProviders()
                     ;
 
                 idmServices.AddTransient
@@ -131,7 +131,7 @@ namespace IdentityManager.Host
                 {
                     HostAuthenticationType = "Cookies",
                     AdditionalSignOutType = "oidc",
-
+                    RequireSsl = false,
                     BearerAuthenticationType="Bearer",
                     AdminRoleName = "admin",
                     RoleClaimType = "role",

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -101,6 +102,10 @@ namespace TzIdentityManager.Configuration
                     //    .Build();
 
                     //opt.Filters.Add(new AuthorizeFilter(policy));
+                    if (identityManagerOptions.SecurityConfiguration.RequireSsl)
+                    {
+                        opt.Filters.Add(new RequireHttpsAttribute());
+                    }
 
                     opt.Filters.Add(new AuthorizeFilter(identityManagerOptions.SecurityConfiguration.AuthorizationPolicy));
                 });
@@ -110,42 +115,30 @@ namespace TzIdentityManager.Configuration
                 idmServices.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                     .AddIdentityServerAuthentication(option =>
                     {
-                        //option.Authority = "http://localhost/tzidentityserver";
                         option.Authority = identityManagerOptions.Authority;// "http://localhost:5001";
                         option.RoleClaimType = "role";
                         option.RequireHttpsMetadata = false;
                         option.ApiName = "api1";
-                        
-                        //option.InboundJwtClaimTypeMap.
-                    })
-                    //.AddOpenIdConnect(opt => {
-                    //    // Set all your OIDC options...
-                    //    opt.Authority="http://localhost:5001";
-                    //    opt.RequireHttpsMetadata = false;
-                    //    opt.ApiName = "api1";
-                    //    // and then set SaveTokens to save tokens to the AuthenticationProperties
-                    //    opt.SaveTokens = true;
-                    //})
-                    ;
+                    });
 
             };
 
             appBuilder.UseBranchWithServices("/idm",branchServices,
                 app => {
 
-                    app.Use(async (ctx, next) =>
-                    {
-                        if (!ctx.Request.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase) &&
-                            identityManagerOptions.SecurityConfiguration.RequireSsl)
-                        {
-                            //ctx.Response.Body.Write("HTTPS required");
-                           await next();
-                        }
-                        else
-                        {
-                            await next();
-                        }
-                    });
+                    //app.Use(async (ctx, next) =>
+                    //{
+                    //    if (!ctx.Request.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase) &&
+                    //        identityManagerOptions.SecurityConfiguration.RequireSsl)
+                    //    {
+                    //        //ctx.Response.Body.Write("HTTPS required");
+                    //       await next();
+                    //    }
+                    //    else
+                    //    {
+                    //        await next();
+                    //    }
+                    //});
 
 
                     //options.Value.SecurityConfiguration.Configure(app);
@@ -173,15 +166,14 @@ namespace TzIdentityManager.Configuration
                     app.UseStaticFiles();
 
 
-                    //app.SuppressDefaultHostAuthentication();
+                    //SuppressDefaultHostAuthentication();
                     app.Use(async (ctx, next) =>
                     {
                         ctx.User = new ClaimsPrincipal(new ClaimsIdentity());
                         await next.Invoke();
                     });
 
-                    //app.UseIdentityServer();
-                    app.UseAuthentication(); // not needed, since UseIdentityServer adds the authentication middleware
+                    app.UseAuthentication();
 
                     app.UseMvc(routes =>
                     {
