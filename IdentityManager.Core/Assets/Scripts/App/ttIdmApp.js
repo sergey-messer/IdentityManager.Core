@@ -41,27 +41,22 @@
 
         function load() {
            
-            
             removed();
-debugger 
+
             idmTokenManager.mgr.getUser().then(function (user) {
-                
                 if (user!=null) {
                     idmApi.get().then(function (api) {
-
                         $rootScope.layout.username = api.data.currentUser.username;
                         $rootScope.layout.links = api.links;
                     }, function (err) {
                         idmErrorService.show(err);
                     });
+                    $rootScope.$apply();
                 }
             });
-           
-
-
         }
 
-        //idmTokenManager.addOnTokenObtained(load);
+        idmTokenManager.mgr.events.addUserLoaded(load);
         //idmTokenManager.addOnTokenRemoved(removed);
         load();
 
@@ -99,7 +94,6 @@ debugger
     app.controller("LayoutCtrl", LayoutCtrl);
 
     function HomeCtrl(ShowLoginButton, idmTokenManager, $routeParams) {
-        debugger 
         if (ShowLoginButton === false && !idmTokenManager.loggedIn) {
             idmTokenManager.signinRedirect();
         }
@@ -114,14 +108,11 @@ debugger
         }
 
 
-        
-
         idmTokenManager.mgr.signinRedirectCallback(hash).then(function (user) {
-            debugger
 
             idmTokenManager.loggedIn = true;
             idmTokenManager.currentUser = user;
-
+            
             //idmTokenManager.getUser().then(function (user) { debugger });
             $location.url("/");
             $scope.$apply();

@@ -1,5 +1,5 @@
 ﻿/// <reference path="../Libs/angular.min.js" />
-/// <reference path="../Libs/oidc-token-manager.min.js" />
+/// <reference path="../libs/oidc-client.js" />
 
 (function (angular) {
     var app = angular.module("ttIdm", []);
@@ -8,7 +8,6 @@
         function intercept($q, idmTokenManager, idmErrorService) {
             return {
                 'request': function (config) {
-                    debugger
                     var deferred = $q.defer();
                     idmErrorService.clear();
                     idmTokenManager.mgr.getUser().then(function(user) {
@@ -17,14 +16,7 @@
                         }
                         deferred.resolve(config);
                     });
-                    //if (idmTokenManager.currentUser != null) {
-                    //    var token = idmTokenManager.currentUser.access_token;
-                    //    if (token) {
-                    //        config.headers['Authorization'] = 'Bearer ' + token;
-                    //    }
-                    //}
                     return deferred.promise;
-                    //return config;
                 },
                 'responseError': function (response) {
                     if (response.status === 401) {
@@ -65,7 +57,7 @@
     idmErrorService.$inject = ["$rootScope", "$timeout"];
     app.factory("idmErrorService", idmErrorService);
 
-    function idmTokenManager(OidcTokenManager, oauthSettings, PathBase, $window, $rootScope, idmErrorService) {
+    function idmTokenManager(oauthSettings, PathBase, $window, $rootScope, idmErrorService) {
 
         //oauthSettings.response_type = "token";
 
@@ -87,7 +79,6 @@
         //    }
         //});
 
-        //mgr = new FakeTokenManager(oauthSettings);
 
         var config = {
             authority: "http://localhost:5001/",
@@ -148,7 +139,6 @@
 
         this.signinRedirectCallback = function () {
             return mgr.signinRedirectCallback().then(function (user) {
-                debugger 
                 if (user != null) {
                     context.loggedIn = true;
                     context.currentUser = user;
@@ -158,9 +148,6 @@
                 console.log(err);
             });
         }
-
-
-
 
         this.mgr.events.addUserLoaded(function (user) {
             log("User loaded");
@@ -183,7 +170,7 @@
 
         //return this.mgr;
     }
-    idmTokenManager.$inject = ["OidcTokenManager", "oauthSettings", "PathBase", "$window", "$rootScope", "idmErrorService"];
+    idmTokenManager.$inject = ["oauthSettings", "PathBase", "$window", "$rootScope", "idmErrorService"];
     app.service("idmTokenManager", idmTokenManager);
 
     function idmApi(idmTokenManager, $http, $q, PathBase) {
@@ -357,7 +344,6 @@
     for (var key in model) {
         angular.module("ttIdm").constant(key, model[key]);
     }
-    angular.module("ttIdm").constant("OidcTokenManager", OidcTokenManager);
 })(angular);
 
 
