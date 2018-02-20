@@ -10,7 +10,7 @@
                 'request': function (config) {
                     var deferred = $q.defer();
                     idmErrorService.clear();
-                    idmTokenManager.mgr.getUser().then(function(user) {
+                    idmTokenManager.getUser().then(function(user) {
                         if (user != null) {
                             config.headers['Authorization'] = 'Bearer ' + user.access_token;
                         }
@@ -61,24 +61,7 @@
 
         //oauthSettings.response_type = "token";
 
-        //var mgr = new OidcTokenManager(oauthSettings);
-
-        //var applyFuncs = [
-        //        "_callTokenRemoved",
-        //        "_callTokenExpiring",
-        //        "_callTokenExpired",
-        //        "_callTokenObtained",
-        //        "_callSilentTokenRenewFailed"
-        //];
-        //applyFuncs.forEach(function (name) {
-        //    var tmp = mgr[name].bind(mgr);
-        //    mgr[name] = function () {
-        //        $rootScope.$applyAsync(function () {
-        //            tmp();
-        //        });
-        //    }
-        //});
-
+        
 
         var config = {
             authority: "http://localhost:5001/",
@@ -111,75 +94,62 @@
             filterProtocolClaims: false
         };
 
-        var context = this;
-        this.loggedIn = false;
-        this.currentUser = null;
-       
+        
         var mgr = new Oidc.UserManager(config);
-        this.mgr = mgr;
-
-        mgr.getUser().then(function (user) {
-            if (user != null) {
-                context.loggedIn = true;
-                context.currentUser = user;
-            } else {
-                context.loggedIn = false;
-                context.currentUser = null;
-            }
-        });
         
 
-        this.signinRedirect = function () {
-            mgr.signinRedirect().then(function () {
-                console.log('signinRedirect done');
-            }).catch(function (err) {
-                console.log(err);
-            });
-        }
-
-        this.signinRedirectCallback = function () {
-            return mgr.signinRedirectCallback().then(function (user) {
-                if (user != null) {
-                    context.loggedIn = true;
-                    context.currentUser = user;
-                }
-                console.log('signed in', user);
-            }).catch(function (err) {
-                console.log(err);
-            });
-        }
-
-        this.mgr.events.addUserLoaded(function (user) {
-            log("User loaded");
-            //showTokens();
-        });
-        this.mgr.events.addUserUnloaded(function () {
-            log("User logged out locally");
-            //showTokens();
-        });
-        this.mgr.events.addAccessTokenExpiring(function () {
-            log("Access token expiring...");
-        });
-        this.mgr.events.addSilentRenewError(function (err) {
-            log("Silent renew error: " + err.message);
-        });
-        this.mgr.events.addUserSignedOut(function () {
-            log("User signed out of OP");
-        });
+        //var applyFuncs = [
+        //    //"_accessTokenExpired",
+        //    //"_signinEnd"
+        //    //"_callTokenRemoved",
+        //    //"_callTokenExpiring",
+        //    //"_callTokenExpired",
+        //    //"_callTokenObtained",
+        //    //"_callSilentTokenRenewFailed"
+        //];
+        //applyFuncs.forEach(function (name) {
+        //    debugger 
+        //    var tmp = mgr[name].bind(mgr);
+        //    mgr[name] = function () {
+        //        $rootScope.$applyAsync(function () {
+        //            tmp();
+        //        });
+        //    }
+        //});
 
 
-        //return this.mgr;
+        
+        //this.mgr.events.addUserLoaded(function (user) {
+        //    log("User loaded");
+        //    //showTokens();
+        //});
+        //this.mgr.events.addUserUnloaded(function () {
+        //    log("User logged out locally");
+        //    //showTokens();
+        //});
+        //this.mgr.events.addAccessTokenExpiring(function () {
+        //    log("Access token expiring...");
+        //});
+        //this.mgr.events.addSilentRenewError(function (err) {
+        //    log("Silent renew error: " + err.message);
+        //});
+        //this.mgr.events.addUserSignedOut(function () {
+        //    log("User signed out of OP");
+        //});
+
+
+        return mgr;
     }
     idmTokenManager.$inject = ["oauthSettings", "PathBase", "$window", "$rootScope", "idmErrorService"];
-    app.service("idmTokenManager", idmTokenManager);
+    app.factory("idmTokenManager", idmTokenManager);
 
     function idmApi(idmTokenManager, $http, $q, PathBase) {
         var cache = null;
 
-        //idmTokenManager.addOnTokenRemoved(function () {
-        //    cache = null;
-        //});
-
+        idmTokenManager.events.addUserUnloaded(function () {
+            cache = null;
+        });
+        
         return {
             get: function () {
                 if (cache) {

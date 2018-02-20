@@ -81,6 +81,7 @@ namespace IdentityManager.Host
                     o.SecurityConfiguration = new HostSecurityConfiguration{
                         HostAuthenticationType = "Cookies",
                         AdditionalSignOutType = "oidc",
+                        ShowLoginButton = true,
                         AdminRoleName = "admin",
                         RoleClaimType = "role"
                     };
@@ -93,7 +94,8 @@ namespace IdentityManager.Host
                     HostAuthenticationType = "Cookies",
                     AdditionalSignOutType = "oidc",
                     RequireSsl = false,
-                    BearerAuthenticationType="Bearer",
+                    ShowLoginButton = true,
+                    BearerAuthenticationType ="Bearer",
                     AdminRoleName = "admin",
                     RoleClaimType = "role",
                     AuthorizationPolicy = new AuthorizationPolicyBuilder()

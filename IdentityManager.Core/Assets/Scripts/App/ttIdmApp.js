@@ -35,67 +35,76 @@
             idmErrorService.clear();
             $rootScope.layout.username = null;
             $rootScope.layout.links = null;
-            $rootScope.layout.showLogout = idmTokenManager.loggedIn;
-            $rootScope.layout.showLogin = !idmTokenManager.loggedIn;
+
+            idmTokenManager.getUser().then(function (user) {
+                $rootScope.layout.showLogout = user != null;
+                $rootScope.layout.showLogin=user == null;
+            });
         }
 
         function load() {
            
             removed();
 
-            idmTokenManager.mgr.getUser().then(function (user) {
-                if (user!=null) {
-                    idmApi.get().then(function (api) {
-                        $rootScope.layout.username = api.data.currentUser.username;
-                        $rootScope.layout.links = api.links;
-                    }, function (err) {
-                        idmErrorService.show(err);
-                    });
+            idmTokenManager.getUser().then(function (user) {
+                if (user != null) {
+                    idmApi.get().then(function(api) {
+                            $rootScope.layout.username = api.data.currentUser.username;
+                            $rootScope.layout.links = api.links;
+                        },
+                        function(err) {
+                            idmErrorService.show(err);
+                        });
                     $rootScope.$apply();
+                } else {
+                    if ($location.path() !== "/" &&
+                        $location.path().indexOf("/callback/") !== 0 &&
+                        $location.path() !== "/error" &&
+                        $location.path() !== "/logout") {
+                        $location.path("/");
+                    }
                 }
             });
         }
 
-        idmTokenManager.mgr.events.addUserLoaded(load);
-        //idmTokenManager.addOnTokenRemoved(removed);
+        idmTokenManager.events.addUserLoaded(load);
+        idmTokenManager.events.addUserUnloaded(removed);
+
         load();
 
-        if (!idmTokenManager.loggedIn &&
-            $location.path() !== "/" &&
-            $location.path().indexOf("/callback/") !== 0 && 
-            $location.path() !== "/error" && 
-            $location.path() !== "/logout") {
-                $location.path("/");
-        }
-
-        //idmTokenManager.addOnTokenExpired(function () {
-        //    $location.path("/");
-        //    idmErrorService.show("Your session has expired.");
-        //});
+       
+        idmTokenManager.events.addAccessTokenExpired(function () {
+            $location.path("/");
+            idmErrorService.show("Your session has expired.");
+        });
 
         $rootScope.login = function () {
             idmErrorService.clear();
-            //idmTokenManager.redirectForToken();
             idmTokenManager.signinRedirect();
-            //idmTokenManager.signinRedirect({ scope: "openid", response_type: "id_token" });
-            //response_type: "id_token token",
-            //    scope: "openid profile email api1 api2.read_only",
         }
+
         $rootScope.logout = function () {
             idmErrorService.clear();
-            idmTokenManager.removeToken();
-            $location.path("/logout");
-            if (ShowLoginButton !== false) {
-                $window.location = PathBase + "/logout";
-            }
+            idmTokenManager.removeUser().then(function() {
+                $location.path("/logout");
+                if (ShowLoginButton !== false) {
+                    $window.location = PathBase + "/logout";
+                }
+            });
+            
         }
     }
     LayoutCtrl.$inject = ["$rootScope", "PathBase", "idmApi", "$location", "$window", "idmTokenManager", "idmErrorService", "ShowLoginButton"];
     app.controller("LayoutCtrl", LayoutCtrl);
 
     function HomeCtrl(ShowLoginButton, idmTokenManager, $routeParams) {
-        if (ShowLoginButton === false && !idmTokenManager.loggedIn) {
-            idmTokenManager.signinRedirect();
+        if (ShowLoginButton === false) {
+            idmTokenManager.getUser().then(function(user) {
+                if (user == null) {
+                    idmTokenManager.signinRedirect();
+                }
+            });
+            
         }
     }
     HomeCtrl.$inject = ["ShowLoginButton", "idmTokenManager", "$routeParams"];
@@ -107,29 +116,12 @@
             hash = hash.substr(1);
         }
 
-
-        idmTokenManager.mgr.signinRedirectCallback(hash).then(function (user) {
-
-            idmTokenManager.loggedIn = true;
-            idmTokenManager.currentUser = user;
-            
-            //idmTokenManager.getUser().then(function (user) { debugger });
+        idmTokenManager.signinRedirectCallback(hash).then(function (user) {
             $location.url("/");
             $scope.$apply();
-            //window.location = "/";
-            //console.log(user);
-            //window.history.replaceState({},
-            //    window.document.title,
-            //    window.location.origin + window.location.pathname);
-            //window.location = "index.html";
+        }, function (error) {
+            idmErrorService.error(error && error.message || error);
         });
-
-
-        //idmTokenManager.processTokenCallbackAsync(hash).then(function() {
-        //    $location.url("/");
-        //}, function (error) {
-        //    idmErrorService.error(error && error.message || error);
-        //});
     }
     CallbackCtrl.$inject = ["idmTokenManager", "$location", "$scope", "$routeParams", "idmErrorService"];
     app.controller("CallbackCtrl", CallbackCtrl);
