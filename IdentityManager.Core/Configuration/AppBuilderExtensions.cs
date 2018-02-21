@@ -49,7 +49,7 @@ namespace TzIdentityManager.Configuration
             if (appBuilder == null) throw new ArgumentNullException(nameof(appBuilder));
             if (identityManagerOptions == null) throw new ArgumentNullException(nameof(identityManagerOptions));
 
-           
+            
             //var identityManagerOptions = new IdentityManagerOptions();
             //configureOptions.Invoke(identityManagerOptions);
             //var options = appBuilder.ApplicationServices.GetService<IOptions<IdentityManagerOptions>>();
@@ -61,47 +61,17 @@ namespace TzIdentityManager.Configuration
 
             Action<IServiceCollection> branchServices = idmServices =>
             {
-                
-                //Action<IServiceCollection> t = x =>
-                //{
                 registerServices(idmServices);
-                //};
 
-
-                //idmServices.AddIdentityManager(o =>
+                //idmServices.Configure<IdentityManagerOptions>(o=>
                 //{
-                //    var factory = new IdentityManagerServiceFactory();
-
-                //    //var rand = new System.Random();
-                //    //var users = Users.Get(rand.Next(5000, 20000));
-                //    //var roles = Roles.Get(rand.Next(15));
-
-                //    //factory.Register(new Registration<ICollection<InMemoryUser>>(users));
-                //    //factory.Register(new Registration<ICollection<InMemoryRole>>(roles));
-                //    //factory.IdentityManagerService = new Registration<IIdentityManagerService, AspNetCoreIdentityManagerService>();
-                //    //factory.IdentityManagerServiceDescriptor = ServiceDescriptor.Transient<IIdentityManagerService, AspNetCoreIdentityManagerService<ApplicationUser, IdentityRole>>();
-
-                //    o.Factory = factory;
-                //    o.SecurityConfiguration = new HostSecurityConfiguration
-                //    {
-                //        HostAuthenticationType = "Cookies",
-                //        AdditionalSignOutType = "oidc",
-                //        AdminRoleName = "admin",
-                //        RoleClaimType = "role"
-                //    };
+                //    o= identityManagerOptions;
                 //});
-
+                
                 idmServices.AddAutoMapper(typeof(IdentityModelProfile));
 
                 idmServices.AddMvc(opt =>
                 {
-                    //var policy = new AuthorizationPolicyBuilder()
-                    //    .AddAuthenticationSchemes(identityManagerOptions.SecurityConfiguration.BearerAuthenticationType)
-                    //    .RequireRole(identityManagerOptions.SecurityConfiguration.AdminRoleName)
-                    //    .RequireAuthenticatedUser()
-                    //    .Build();
-
-                    //opt.Filters.Add(new AuthorizeFilter(policy));
                     if (identityManagerOptions.SecurityConfiguration.RequireSsl)
                     {
                         opt.Filters.Add(new RequireHttpsAttribute());
@@ -115,7 +85,7 @@ namespace TzIdentityManager.Configuration
                 idmServices.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                     .AddIdentityServerAuthentication(option =>
                     {
-                        option.Authority = identityManagerOptions.Authority;// "http://localhost:5001";
+                        option.Authority = identityManagerOptions.SecurityConfiguration.Authority;// "http://localhost:5001";
                         option.RoleClaimType = "role";
                         option.RequireHttpsMetadata = false;
                         option.ApiName = "api1";

@@ -23,7 +23,6 @@ namespace TzIdentityManager
         public const string CookieAuthenticationType = "Cookies";
         public const string BearerAuthenticationType = "Bearer";
 
-        public const string AuthorizePath = "/authorize";
         public const string CallbackFragment = "/#/callback/";
         public const string IdMgrClientId = "idmgr";
         public const string IdMgrScope = "idmgr";

@@ -14,6 +14,8 @@ namespace TzIdentityManager.Configuration
         public string RoleClaimType { get; set; }
 
         public string AdminRoleName { get; set; }
+        public string Authority { get; set; }
+        public string ClientId { get; set; }
 
         public virtual bool? ShowLoginButton { get; set; }
 

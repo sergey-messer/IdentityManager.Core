@@ -25,9 +25,7 @@ namespace TzIdentityManager.Configuration
             Factory = new IdentityManagerServiceFactory();
             SecurityConfiguration = new LocalhostSecurityConfiguration();
         }
-
-        public string Authority { get; set; }
-
+        
         public IdentityManagerServiceFactory Factory { get; set; }
         public SecurityConfiguration SecurityConfiguration { get; set; }
         public bool DisableUserInterface { get; set; }

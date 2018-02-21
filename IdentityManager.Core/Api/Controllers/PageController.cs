@@ -40,7 +40,7 @@ namespace TzIdentityManager.Api.Controllers
         [AllowAnonymous]
         public IActionResult Index()
         {
-            return new EmbeddedHtmlResult(Request, "TzIdentityManager.Assets.Templates.index.html");
+            return new EmbeddedHtmlResult(Request, "TzIdentityManager.Assets.Templates.index.html", _idmConfig.SecurityConfiguration);
         }
 
         [HttpGet]

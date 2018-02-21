@@ -77,19 +77,25 @@ namespace IdentityManager.Host
 
                 idmServices.Configure<IdentityManagerOptions>(o =>
                 {
-                    o.Authority = "http://localhost:5001";
-                    o.SecurityConfiguration = new HostSecurityConfiguration{
+                    o.SecurityConfiguration = new HostSecurityConfiguration
+                    {
                         HostAuthenticationType = "Cookies",
                         AdditionalSignOutType = "oidc",
                         ShowLoginButton = true,
                         AdminRoleName = "admin",
-                        RoleClaimType = "role"
+                        RoleClaimType = "role",
+                        Authority = "http://localhost:5001",
+                        ClientId = "js_oidc",
+                        AuthorizationPolicy = new AuthorizationPolicyBuilder()
+                            .AddAuthenticationSchemes(Constants.BearerAuthenticationType)
+                            .RequireRole("admin")
+                            .RequireAuthenticatedUser()
+                            .Build()
                     };
                 });
 
             },new IdentityManagerOptions()
             {
-                Authority ="http://localhost:5001",
                 SecurityConfiguration = new HostSecurityConfiguration{
                     HostAuthenticationType = "Cookies",
                     AdditionalSignOutType = "oidc",
@@ -98,6 +104,8 @@ namespace IdentityManager.Host
                     BearerAuthenticationType ="Bearer",
                     AdminRoleName = "admin",
                     RoleClaimType = "role",
+                    Authority = "http://localhost:5001",
+                    ClientId = "js_oidc",
                     AuthorizationPolicy = new AuthorizationPolicyBuilder()
                         .AddAuthenticationSchemes(Constants.BearerAuthenticationType)
                         .RequireRole("admin")
